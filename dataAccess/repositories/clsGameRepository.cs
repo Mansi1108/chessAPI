@@ -33,7 +33,7 @@ public sealed class clsGameRepository<TI, TC> : clsDataAccess<clsGameEntityModel
         foreach (var game in games)
         {
             TI gameId = await addGame(game).ConfigureAwait(false);
-            r.Add(new clsGameEntityModel<TI, TC>() { id = gameId, started = game.started, whites = game.whites, blacks = game.blacks, turn = game.turn, winner = game.winner });
+            r.Add(new clsGameEntityModel<TI, TC>() { id = gameId, started = DateTime.Now, whites = game.whites, blacks = game.blacks, turn = game.turn, winner = game.winner });
         }
         return r;
     }
