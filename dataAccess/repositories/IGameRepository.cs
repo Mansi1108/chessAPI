@@ -8,6 +8,8 @@ public interface IGameRepository<TI, TC>
         where TC : struct
 {
     Task<TI> addGame(clsNewGame game);
+    Task<IEnumerable<clsGameEntityModel<TI, TC>>> addGames(IEnumerable<clsNewGame> game);
+    Task<IEnumerable<clsGameEntityModel<TI, TC>>> getGames();
     Task updateGame(clsGame<TI> updatedGame);
     Task deleteGame(TI id);
 }

@@ -7,18 +7,18 @@ public sealed class clsGameEntityModel<TI, TC> : relationalEntity<TI, TC>
 {
     public clsGameEntityModel()
     {
-        started = "";
+        started = DateTime.Now;
         whites = 0;
         blacks = 0;
-        turn = false;
+        turn = true;
         winner = 0;
     }
 
     public TI id { get; set; }
-    public string started { get; set; }
-    public int whites { get; set; }
-    public int blacks { get; set; }
+    public DateTime started { get; set; }
+    public int? whites { get; set; }
+    public int? blacks { get; set; }
     public bool turn { get; set; }
-    public int winner { get; set; }
+    public int? winner { get; set; }
     public override TI key { get => id; set => id = value; }
 }

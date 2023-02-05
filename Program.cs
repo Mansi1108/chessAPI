@@ -3,6 +3,7 @@ using Autofac.Extensions.DependencyInjection;
 using chessAPI;
 using chessAPI.business.interfaces;
 using chessAPI.models.player;
+using chessAPI.models.game;
 using Microsoft.AspNetCore.Authorization;
 using Serilog;
 using Serilog.Events;
@@ -50,11 +51,20 @@ try
 
     app.MapGet("/getPlayers",
     [AllowAnonymous] async(IPlayerBusiness<int> bs) => Results.Ok(await bs.getPlayers()));
-    app.Run();
 
     // app.MapGet("/putPlayer",
     // [AllowAnonymous] async(IPlayerBusiness<int> bs, clsPutPlayer updatedPlayer) => Results.Ok(await bs.putPlayer(updatedPlayer)));
     // app.Run();
+
+    //EndPoint GAME
+    app.MapPost("/newgame",
+    [AllowAnonymous] async(IGameBusiness<int> bs, clsNewGame newGame) => Results.Ok(await bs.addGame(newGame)));
+    
+
+    app.MapGet("/getgames",
+    [AllowAnonymous] async(IGameBusiness<int> bs) => Results.Ok(await bs.getGames()));
+
+    app.Run();
 }
 catch (Exception ex)
 {

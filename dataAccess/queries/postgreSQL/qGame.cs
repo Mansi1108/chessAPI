@@ -13,15 +13,15 @@ public sealed class qGame : IQGame
     INSERT INTO public.game(started, whites, blacks, turn, winner)
 	VALUES (@STARTED, @WHITES, @BLACKS, @TURN, @WINNER) RETURNING id";
     private const string _delete = @"
-    DELETE FROM public.player 
+    DELETE FROM public.game 
     WHERE id = @ID";
     private const string _update = @"
     UPDATE public.game
-	SET started = @STARTED
-    SET whites = @WHITES
-    SET blacks = @BLACKS
-    SET turn = @TURN
-    SET winner = @WINNER
+	SET started = @STARTED,
+    SET whites = @WHITES,
+    SET blacks = @BLACKS,
+    SET turn = @TURN,
+    SET winner = @WINNER,
 	WHERE id=@ID";
 
     public string SQLGetAll => _selectAll;
