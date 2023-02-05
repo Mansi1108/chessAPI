@@ -43,10 +43,18 @@ try
         return "hola mundo";
     });
 
-    app.MapPost("player", 
+    //ENDPOINTS PLAYER
+
+    app.MapPost("/player", 
     [AllowAnonymous] async(IPlayerBusiness<int> bs, clsNewPlayer newPlayer) => Results.Ok(await bs.addPlayer(newPlayer)));
 
+    app.MapGet("/getPlayers",
+    [AllowAnonymous] async(IPlayerBusiness<int> bs) => Results.Ok(await bs.getPlayers()));
     app.Run();
+
+    // app.MapGet("/putPlayer",
+    // [AllowAnonymous] async(IPlayerBusiness<int> bs, clsPutPlayer updatedPlayer) => Results.Ok(await bs.putPlayer(updatedPlayer)));
+    // app.Run();
 }
 catch (Exception ex)
 {
