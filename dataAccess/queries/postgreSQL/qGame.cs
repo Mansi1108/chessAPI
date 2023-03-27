@@ -10,19 +10,24 @@ public sealed class qGame : IQGame
     FROM public.game
     WHERE id=@ID";
     private const string _add = @"
-    INSERT INTO public.game(started, whites, blacks, turn, winner)
-	VALUES (@STARTED, @WHITES, @BLACKS, @TURN, @WINNER) RETURNING id";
+    INSERT INTO public.game(started, whites, turn)
+	VALUES (@STARTED, @WHITES, @TURN) RETURNING id";
     private const string _delete = @"
     DELETE FROM public.game 
     WHERE id = @ID";
     private const string _update = @"
     UPDATE public.game
-	SET started = @STARTED,
-    SET whites = @WHITES,
-    SET blacks = @BLACKS,
-    SET turn = @TURN,
-    SET winner = @WINNER,
-	WHERE id=@ID";
+        SET blacks = @BLACKS,
+        WHERE id=1 AND NOT EXISTS (
+            SELECT x.player_id
+            FROM team_player x
+            WHERE team_id = @WHITES
+            AND EXISTS (
+                SELECT 1 FROM team_player y
+                WHERE team_id = @BLACKS AND x.player_id = y.player_id
+            )
+        )
+	RETURNING id";
 
     public string SQLGetAll => _selectAll;
 

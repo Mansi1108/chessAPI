@@ -18,28 +18,22 @@ public sealed class clsGameBusiness<TI, TC> : IGameBusiness<TI>
     public async Task<clsGame<TI>> addGame(clsNewGame newGame)
     {
         var x = await gameRepository.addGame(newGame).ConfigureAwait(false);
-        return new clsGame<TI>(x, newGame.started, newGame.whites, newGame.blacks, newGame.turn, newGame.winner);
+        return new clsGame<TI>(x, newGame.started, newGame.whites, 0, newGame.turn, 0);
     }
 
-    public async Task<List<clsGame<TI>>> getGames()
+    public async Task<clsGame<TI>> getGame(TI ID)
     {
-        List<clsGame<TI>> games = new List<clsGame<TI>>();
-        var r = await gameRepository.getGames().ConfigureAwait(false);
-        foreach (var value in r)
-        {
-            clsGame<TI> game = new clsGame<TI>(value.id, value.started, value.whites, value.blacks, value.turn, value.winner);
-            games.Add(game);
-        }
-        return games;
+        var x = await gameRepository.getGame(ID).ConfigureAwait(false);
+        return new clsGame<TI>(ID, x.started, x.whites, x.blacks, x.turn, x.winner);
     }
-    //  public async Task<clsGame<TI>> putGame()
-    // {
-    //     var r = await gameRepository.getGames().ConfigureAwait(false);
-    //     foreach (var value in r)
-    //     {
-    //         clsGame<TI> game = new clsGame<TI>(value.id, value.started, value.whites, value.blacks, value.turn, value.winner);
-    //         games.Add(game);
-    //     }
-    //     return games;
-    // }
+    
+    public async Task<clsGame<TI>> putGame(clsGame<TI> putGame)
+    {
+        var x = await gameRepository.putGame(putGame).ConfigureAwait(false);
+        if (x == null)
+        {
+            return null;
+        }
+        return new clsGame<TI>(x.id, x.started, x.whites, x.blacks, x.turn, x.winner);
+    }
 }

@@ -20,9 +20,10 @@ where TI : struct, IEquatable<TI>
     protected override void Load(ContainerBuilder builder)
     {
         base.Load(builder);
+        //base de datos relacional, aqui se hace la conexion de datos, npg es el driver de postgress
         builder.Register(c => new NpgsqlConnection(c.Resolve<IOptions<connectionStrings>>().Value.relationalDBConn))
             .InstancePerLifetimeScope()
-            .As<IDbConnection>();
+            .As<IDbConnection>(); 
 
         #region "Low level DAL Infrastructure"
         builder.Register(c => new clsConcurrency<TC>())
@@ -43,10 +44,6 @@ where TI : struct, IEquatable<TI>
         builder.Register(c => new qGame())
             .SingleInstance()
             .As<IQGame>();
-
-        builder.Register(c => new qTeam())
-            .SingleInstance()
-            .As<IQTeam>();
         #endregion
 
         #region "Repositories"
@@ -61,12 +58,6 @@ where TI : struct, IEquatable<TI>
                                                             c.Resolve<ILogger<clsGameRepository<TI, TC>>>()))
                .InstancePerDependency()
                .As<IGameRepository<TI, TC>>();
-        
-        builder.Register(c => new clsTeamRepository<TI, TC>(c.Resolve<IRelationalContext<TC>>(),
-                                                            c.Resolve<IQTeam>(),
-                                                            c.Resolve<ILogger<clsTeamRepository<TI, TC>>>()))
-               .InstancePerDependency()
-               .As<ITeamRepository<TI, TC>>();
         #endregion
 
         #region "Kaizen Entity Factories"
@@ -81,11 +72,6 @@ where TI : struct, IEquatable<TI>
             IComponentContext cc = context.Resolve<IComponentContext>();
             return cc.Resolve<IGameRepository<TI, TC>>;
         });
-        builder.Register<Func<ITeamRepository<TI, TC>>>(delegate (IComponentContext context)
-        {
-            IComponentContext cc = context.Resolve<IComponentContext>();
-            return cc.Resolve<ITeamRepository<TI, TC>>;
-        });
         #endregion
 
         #region "Business classes"
@@ -96,9 +82,6 @@ where TI : struct, IEquatable<TI>
         builder.Register(c => new clsGameBusiness<TI, TC>(c.Resolve<IGameRepository<TI, TC>>()))
                .InstancePerDependency()
                .As<IGameBusiness<TI>>();
-        builder.Register(c => new clsTeamBusiness<TI, TC>(c.Resolve<ITeamRepository<TI, TC>>()))
-               .InstancePerDependency()
-               .As<ITeamBusiness<TI>>();
         #endregion
     }
 }

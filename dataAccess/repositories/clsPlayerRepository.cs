@@ -23,12 +23,6 @@ public sealed class clsPlayerRepository<TI, TC> : clsDataAccess<clsPlayerEntityM
         return await add<TI>(p).ConfigureAwait(false);
     }
 
-    public async Task<IEnumerable<clsPlayerEntityModel<TI, TC>>> getPlayers()
-    {
-        var p = new DynamicParameters();
-        return await getALL(p).ConfigureAwait(false);
-    }
-
     public async Task<IEnumerable<clsPlayerEntityModel<TI, TC>>> addPlayers(IEnumerable<clsNewPlayer> players)
     {
         var r = new List<clsPlayerEntityModel<TI, TC>>(players.Count());
@@ -40,19 +34,18 @@ public sealed class clsPlayerRepository<TI, TC> : clsDataAccess<clsPlayerEntityM
         return r;
     }
 
-    public Task deletePlayer(TI id)
+    public async Task<clsPlayerEntityModel<TI, TC>> getPlayer(TI playerID)
     {
-        throw new NotImplementedException();
+        return await getEntity(playerID).ConfigureAwait(false);
     }
 
-    public Task<IEnumerable<clsPlayerEntityModel<TI, TC>>> getPlayersByGame(TI gameId)
+    public async Task<clsPlayerEntityModel<TI, TC>> putPlayer(clsPlayer<TI> updatedPlayer)
     {
-        throw new NotImplementedException();
-    }
-
-    public Task updatePlayer(clsPlayer<TI> updatedPlayer)
-    {
-        throw new NotImplementedException();
+        var p = new DynamicParameters();
+        p.Add("EMAIL", updatedPlayer.email);
+        p.Add("ID", updatedPlayer.id);
+        var result = await set<clsPlayerEntityModel<TI,TC>>(p, null, queries.UpdateWholeEntity, null).ConfigureAwait(false);
+        return result;
     }
 
     protected override DynamicParameters fieldsAsParams(clsPlayerEntityModel<TI, TC> entity)

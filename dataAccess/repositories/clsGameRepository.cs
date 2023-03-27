@@ -21,9 +21,7 @@ public sealed class clsGameRepository<TI, TC> : clsDataAccess<clsGameEntityModel
         var p = new DynamicParameters();
         p.Add("STARTED", game.started);
         p.Add("WHITES", game.whites);
-        p.Add("BLACKS", game.blacks);
         p.Add("TURN", game.turn);
-        p.Add("WINNER", game.winner);
         return await add<TI>(p).ConfigureAwait(false);
     }
 
@@ -33,15 +31,14 @@ public sealed class clsGameRepository<TI, TC> : clsDataAccess<clsGameEntityModel
         foreach (var game in games)
         {
             TI gameId = await addGame(game).ConfigureAwait(false);
-            r.Add(new clsGameEntityModel<TI, TC>() { id = gameId, started = DateTime.Now, whites = game.whites, blacks = game.blacks, turn = game.turn, winner = game.winner });
+            r.Add(new clsGameEntityModel<TI, TC>() { id = gameId, started = DateTime.Now, whites = game.whites, turn = game.turn});
         }
         return r;
     }
 
-    public async Task<IEnumerable<clsGameEntityModel<TI, TC>>> getGames()
+    public async Task<clsGameEntityModel<TI, TC>> getGame(TI gameID)
     {
-        var p = new DynamicParameters();
-        return await getALL(p).ConfigureAwait(false);
+        return await getEntity(gameID).ConfigureAwait(false);
     }
 
     public Task deleteGame(TI id)
@@ -50,9 +47,14 @@ public sealed class clsGameRepository<TI, TC> : clsDataAccess<clsGameEntityModel
     }
 
 
-    public Task updateGame(clsGame<TI> updatedGame)
+    public async Task<clsGameEntityModel<TI,TC>> putGame(clsGame<TI> game)
     {
-        throw new NotImplementedException();
+        var p = new DynamicParameters();
+        p.Add("BLACKS", game.blacks);
+        p.Add("WHITES", game.whites);
+        p.Add("ID", game.id);
+        var result = await set<clsGameEntityModel<TI,TC>>(p, null, queries.UpdateWholeEntity, null).ConfigureAwait(false);
+        return result;
     }
 
     protected override DynamicParameters fieldsAsParams(clsGameEntityModel<TI, TC> entity)

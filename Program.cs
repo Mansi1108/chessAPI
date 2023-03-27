@@ -34,7 +34,7 @@ try
              .FromLogContext().WriteTo
              .Console());
 
-    // Autofac como inyección de dependencias
+    // Autofac como inyección de dependencias, configuracion de servicios
     builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
     builder.Host.ConfigureContainer<ContainerBuilder>(builder => builder.RegisterModule(new chessAPI.dependencyInjection<int, int>()));
     var app = builder.Build();
@@ -47,36 +47,34 @@ try
 
     //ENDPOINTS PLAYER
 
-    app.MapPost("/player", 
+    app.MapPost("player", 
     [AllowAnonymous] async(IPlayerBusiness<int> bs, clsNewPlayer newPlayer) => Results.Ok(await bs.addPlayer(newPlayer)));
 
-    app.MapGet("/getPlayers",
-    [AllowAnonymous] async(IPlayerBusiness<int> bs) => Results.Ok(await bs.getPlayers()));
+    app.MapGet("player", 
+    [AllowAnonymous] async(IPlayerBusiness<int> bs, int idplayer) => Results.Ok(await bs.getPlayer(idplayer)));
 
-    // app.MapPut("/putPlayer",
-    // [AllowAnonymous] async(IPlayerBusiness<int> bs, clsPutPlayer updatedPlayer) => Results.Ok(await bs.putPlayer(updatedPlayer)));
+    app.MapPut("player",
+    [AllowAnonymous] async(IPlayerBusiness<int> bs, int idplayer, clsPlayer<int> updatePlayer) => Results.Ok(await bs.putPlayer(updatePlayer)));
 
-    //EndPoint GAME
-    app.MapPost("/newgame",
-    [AllowAnonymous] async(IGameBusiness<int> bs, clsNewGame newGame) => Results.Ok(await bs.addGame(newGame)));
+    //ENDPORINTS GAME
     
+    app.MapGet("game", 
+    [AllowAnonymous] async(IGameBusiness<int> bs, int idgame) => Results.Ok(await bs.getGame(idgame)));    
 
-    app.MapGet("/getgames",
-    [AllowAnonymous] async(IGameBusiness<int> bs) => Results.Ok(await bs.getGames()));
+    app.MapPut("game",
+    [AllowAnonymous] async(IGameBusiness<int> bs, int idgame, clsGame<int> updateGame) => Results.Ok(await bs.putGame(updateGame)));
 
-    // app.MapPut("/putgame",
-    // [AllowAnonymous] async(IGameBusiness<int> bs, clsPutGame updatedGame) => Results.Ok(await bs.putGame(updatedGame)));
-
-    //ENDPOINTS TEAM
-    app.MapPost("/newteam",
-    [AllowAnonymous] async(ITeamBusiness<int> bs, clsNewTeam newTeam) => Results.Ok(await bs.addTeam(newTeam)));
-    
-
-    app.MapGet("/getteams",
-    [AllowAnonymous] async(ITeamBusiness<int> bs) => Results.Ok(await bs.getTeams()));
-
-    // app.MapPut("/putteam",
-    // [AllowAnonymous] async(ITeamBusiness<int> bs, clsPutTeam updatedTeam) => Results.Ok(await bs.putTeam(updatedTeam)));
+    app.MapPost("game", 
+    [AllowAnonymous] async(IGameBusiness<int> bs, clsNewGame newGame) => {
+        var result = await bs.addGame(newGame);
+        if (result != null)
+        {
+            return Results.Ok(result);
+        } else {
+            return Results.NotFound("No se pudo generar el juego");
+        }
+        
+    });
 
     app.Run();
 }
